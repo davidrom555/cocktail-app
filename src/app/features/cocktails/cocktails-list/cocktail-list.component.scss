@@ -1,0 +1,215 @@
+.cocktail-list-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header-section {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  color: white;
+  border-radius: 8px 8px 0 0;
+
+  h1 {
+    margin: 0;
+    font-size: 1.8rem;
+
+    i {
+      margin-right: 10px;
+    }
+  }
+}
+
+.filters-section {
+  padding: 20px;
+  background: #f5f5f5;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+.filter-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.filter-item {
+  flex: 1;
+  min-width: 200px;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+  }
+
+  ::ng-deep .p-select {
+    background: white;
+    border-radius: 8px;
+  }
+
+  ::ng-deep .p-inputtext {
+    background: white;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+}
+
+::ng-deep .p-select-overlay {
+  background: white !important;
+
+  .p-select-option {
+    background: white;
+
+    &:hover {
+      background: #f0f0f0;
+    }
+  }
+
+  .p-select-option-group {
+    background: white;
+  }
+}
+
+.flex-2 {
+  flex: 2;
+}
+
+// filtro alfabetico
+.alphabet-filter {
+  margin-top: 20px;
+
+  label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+}
+
+.alphabet-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.letter-btn {
+  min-width: 35px;
+  height: 35px;
+  font-size: 14px;
+}
+
+.clear-filters {
+  margin-top: 15px;
+  text-align: center;
+}
+
+// resultados
+.results-info {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+// tabla
+.cocktail-table {
+  background: white;
+  border-radius: 8px;
+}
+
+.id-link {
+  color: #06b6d4;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 600;
+  display: block;
+  text-align: center;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.cocktail-name {
+  strong {
+    color: #333;
+  }
+}
+
+.category-tag {
+  cursor: pointer;
+}
+
+// mensaje vacio
+.empty-message {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+
+  i {
+    font-size: 3rem;
+    color: #ccc;
+  }
+
+  h3 {
+    margin: 0;
+    color: #666;
+  }
+
+  p {
+    color: #999;
+    margin: 0;
+  }
+}
+
+// resumen footer
+.summary-section {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 15px;
+  background: #f8f9fa;
+  border-top: 2px solid #e9ecef;
+  gap: 20px;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+
+  i {
+    font-size: 20px;
+    color: #06b6d4;
+  }
+
+  strong {
+    color: #06b6d4;
+    font-size: 18px;
+  }
+}
+
+// responsive basico
+@media (max-width: 768px) {
+  .filter-row {
+    flex-direction: column;
+  }
+
+  .filter-item {
+    min-width: 100%;
+  }
+
+  .letter-btn {
+    min-width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+}
