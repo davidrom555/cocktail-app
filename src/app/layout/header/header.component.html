@@ -1,0 +1,20 @@
+<p-toolbar styleClass="header-toolbar">
+  <div class="p-toolbar-group-start">
+    <div class="logo" (click)="navigateHome()">
+      <i class="pi pi-glass-martini"></i>
+      <span class="logo-text">Cocktail Explorer</span>
+    </div>
+  </div>
+
+  @if (showRandomButton) {
+    <div class="p-toolbar-group-end">
+      <p-button
+        label="Random Cocktail"
+        icon="pi pi-shuffle"
+        severity="warn"
+        (onClick)="goToRandomCocktail()"
+        [rounded]="true">
+      </p-button>
+    </div>
+  }
+</p-toolbar>
