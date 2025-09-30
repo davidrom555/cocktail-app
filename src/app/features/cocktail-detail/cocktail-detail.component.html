@@ -1,0 +1,212 @@
+@if (cocktail) {
+  <div class="cocktail-detail-container">
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="header-actions">
+          <p-button
+            icon="pi pi-arrow-left"
+            label="Volver"
+            [outlined]="true"
+            (onClick)="goBack()">
+          </p-button>
+          <div class="header-title">
+            <h2>{{ cocktail.strDrink }}</h2>
+          </div>
+          <p-button
+            icon="pi pi-refresh"
+            label="Random"
+            severity="help"
+            (onClick)="loadRandomCocktail()">
+          </p-button>
+        </div>
+      </ng-template>
+
+      <div class="cocktail-content">
+        <div class="cocktail-main">
+          <!-- Imagen y tags -->
+          <div class="cocktail-image-section">
+            <div class="image-container">
+              <img
+                [src]="cocktail.strDrinkThumb"
+                [alt]="cocktail.strDrink"
+                class="cocktail-image"
+                (click)="openImageFullscreen()">
+            </div>
+
+            <div class="cocktail-tags">
+              <p-tag
+                [value]="cocktail.strCategory"
+                severity="info"
+                icon="pi pi-tag">
+              </p-tag>
+              <p-tag
+                [value]="cocktail.strAlcoholic"
+                [severity]="cocktail.strAlcoholic === 'Alcoholic' ? 'warn' : 'success'"
+                [icon]="cocktail.strAlcoholic === 'Alcoholic' ? 'pi pi-wine-bottle' : 'pi pi-leaf'">
+              </p-tag>
+              <p-tag
+                [value]="cocktail.strGlass"
+                severity="secondary"
+                icon="pi pi-glass-martini">
+              </p-tag>
+            </div>
+
+            <div class="quick-stats">
+              <div class="stat-item">
+                <i class="pi pi-list"></i>
+                <span>{{ ingredients.length }} ingredientes</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Info del cocktail -->
+          <div class="cocktail-info">
+            <!-- Ingredientes -->
+            <div class="section-card ingredients-section">
+              <div class="section-header">
+                <h3><i class="pi pi-list"></i> Ingredientes</h3>
+                <p-button
+                  label="Ver Todos"
+                  icon="pi pi-external-link"
+                  size="small"
+                  [outlined]="true"
+                  (onClick)="showIngredientsModal = true">
+                </p-button>
+              </div>
+
+              <div class="ingredients-preview">
+                @for (ingredient of ingredients.slice(0, 6); track ingredient.name) {
+                  <div class="ingredient-item">
+                    <div class="ingredient-info">
+                      <strong>{{ ingredient.name }}</strong>
+                      <small>{{ ingredient.measure || 'Al gusto' }}</small>
+                    </div>
+                  </div>
+                }
+                @if (ingredients.length > 6) {
+                  <div class="more-ingredients">
+                    <p-chip
+                      [label]="'+' + (ingredients.length - 6) + ' más'"
+                      icon="pi pi-plus"
+                      (click)="showIngredientsModal = true"
+                      styleClass="more-chip">
+                    </p-chip>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <p-divider></p-divider>
+
+            <!-- Instrucciones con selector de idioma -->
+            <div class="section-card instructions-section">
+              <div class="section-header">
+                <h3><i class="pi pi-book"></i> Instrucciones</h3>
+              </div>
+
+              <!-- Botones de idioma con banderas -->
+              <div class="language-selector">
+                <label>Seleccionar idioma:</label>
+                <div class="language-buttons">
+                  <button
+                    pButton
+                    [label]="'🇬🇧 English'"
+                    [class.p-button-outlined]="selectedLanguage !== 'en'"
+                    [class.p-button-raised]="selectedLanguage === 'en'"
+                    [disabled]="!isLanguageAvailable('en')"
+                    (click)="changeLanguage('en')"
+                    size="small"
+                    class="lang-btn">
+                  </button>
+                  <button
+                    pButton
+                    [label]="'🇪🇸 Español'"
+                    [class.p-button-outlined]="selectedLanguage !== 'es'"
+                    [class.p-button-raised]="selectedLanguage === 'es'"
+                    [disabled]="!isLanguageAvailable('es')"
+                    (click)="changeLanguage('es')"
+                    size="small"
+                    class="lang-btn">
+                  </button>
+                  <button
+                    pButton
+                    [label]="'🇩🇪 Deutsch'"
+                    [class.p-button-outlined]="selectedLanguage !== 'de'"
+                    [class.p-button-raised]="selectedLanguage === 'de'"
+                    [disabled]="!isLanguageAvailable('de')"
+                    (click)="changeLanguage('de')"
+                    size="small"
+                    class="lang-btn">
+                  </button>
+                  <button
+                    pButton
+                    [label]="'🇫🇷 Français'"
+                    [class.p-button-outlined]="selectedLanguage !== 'fr'"
+                    [class.p-button-raised]="selectedLanguage === 'fr'"
+                    [disabled]="!isLanguageAvailable('fr')"
+                    (click)="changeLanguage('fr')"
+                    size="small"
+                    class="lang-btn">
+                  </button>
+                  <button
+                    pButton
+                    [label]="'🇮🇹 Italiano'"
+                    [class.p-button-outlined]="selectedLanguage !== 'it'"
+                    [class.p-button-raised]="selectedLanguage === 'it'"
+                    [disabled]="!isLanguageAvailable('it')"
+                    (click)="changeLanguage('it')"
+                    size="small"
+                    class="lang-btn">
+                  </button>
+                </div>
+              </div>
+
+              <div class="instructions-content">
+                @if (currentInstructions) {
+                  <p>{{ currentInstructions }}</p>
+                } @else {
+                  <p class="no-translation">
+                    <i class="pi pi-exclamation-triangle"></i>
+                    Instrucciones no disponibles en este idioma.
+                  </p>
+                }
+              </div>
+            </div>
+
+            <!-- Tags -->
+            @if (cocktail.strTags) {
+              <div class="additional-info">
+                <p-divider></p-divider>
+                <div class="tags-section">
+                  <h4>Tags:</h4>
+                  <div class="custom-tags">
+                    @for (tag of getTags(); track tag) {
+                      <p-chip
+                        [label]="tag"
+                        styleClass="custom-tag">
+                      </p-chip>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Modal de ingredientes -->
+  <app-ingredients-modal
+    [(visible)]="showIngredientsModal"
+    [cocktail]="cocktail">
+  </app-ingredients-modal>
+}
+
+<!-- Loading -->
+@if (loading) {
+  <div class="loading-container">
+    <p-progressSpinner></p-progressSpinner>
+    <p>Cargando detalles del cóctel...</p>
+  </div>
+}
