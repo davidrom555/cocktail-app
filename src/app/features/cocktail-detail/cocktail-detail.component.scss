@@ -1,0 +1,274 @@
+.cocktail-detail-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-actions {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+
+  .header-title {
+    color: white;
+
+    h2 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+  }
+}
+
+.cocktail-content {
+  padding: 20px;
+}
+
+.cocktail-main {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+// imagen y tags
+.cocktail-image-section {
+  .image-container {
+    position: relative;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+
+    .cocktail-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      cursor: pointer;
+      transition: transform 0.3s;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+
+  .cocktail-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .quick-stats {
+    background: #f5f5f5;
+    padding: 15px;
+    border-radius: 8px;
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+
+      i {
+        color: #06b6d4;
+      }
+    }
+  }
+}
+
+// info del cocktail
+.cocktail-info {
+  .section-card {
+    margin-bottom: 20px;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+
+    h3 {
+      margin: 0;
+      color: #333;
+      font-size: 1.3rem;
+
+      i {
+        margin-right: 8px;
+        color: #06b6d4;
+      }
+    }
+  }
+}
+
+// ingredientes
+.ingredients-preview {
+  .ingredient-item {
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    border-left: 3px solid #06b6d4;
+
+    .ingredient-info {
+      strong {
+        display: block;
+        color: #333;
+        margin-bottom: 4px;
+      }
+
+      small {
+        color: #666;
+      }
+    }
+  }
+
+  .more-ingredients {
+    text-align: center;
+    margin-top: 10px;
+
+    .more-chip {
+      cursor: pointer;
+    }
+  }
+}
+
+// instrucciones
+.instructions-section {
+  .language-selector {
+    margin-bottom: 20px;
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    .language-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .lang-btn {
+      font-size: 13px;
+    }
+  }
+
+  .instructions-content {
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    line-height: 1.6;
+
+    p {
+      margin: 0;
+      color: #444;
+    }
+
+    .no-translation {
+      color: #999;
+      font-style: italic;
+      text-align: center;
+
+      i {
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+// tags
+.additional-info {
+  .tags-section {
+    h4 {
+      margin-bottom: 10px;
+      color: #555;
+    }
+
+    .custom-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+  }
+}
+
+// slider de categoria
+.category-slider-section {
+  margin-top: 30px;
+
+  h3 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+}
+
+.carousel-cocktail {
+  cursor: pointer;
+  text-align: center;
+  padding: 10px;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  .carousel-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 10px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .carousel-name {
+    font-weight: 500;
+    color: #333;
+    margin: 0;
+  }
+}
+
+// loading
+.loading-container {
+  text-align: center;
+  padding: 50px 20px;
+
+  p {
+    margin-top: 15px;
+    color: #666;
+  }
+}
+
+// responsive
+@media (max-width: 968px) {
+  .cocktail-main {
+    grid-template-columns: 1fr;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .language-selector .language-buttons {
+    flex-direction: column;
+
+    .lang-btn {
+      width: 100%;
+    }
+  }
+}
