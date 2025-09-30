@@ -1,0 +1,57 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [header]="(cocktail && cocktail.strDrink) ? (cocktail.strDrink + ' - Ingredientes') : 'Ingredientes'"
+  [style]="{ width: '600px', maxWidth: '90vw' }"
+  [breakpoints]="{ '768px': '95vw' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onHide()">
+
+  @if (cocktail) {
+    <div class="ingredients-container">
+      <!-- contador de ingredientes -->
+      <div class="ingredients-header">
+        <p-chip
+          [label]="'Total: ' + ingredients.length + ' ingredientes'"
+          icon="pi pi-list"
+          styleClass="custom-chip">
+        </p-chip>
+      </div>
+
+      <!-- grilla de ingredientes -->
+      <div class="ingredients-grid">
+        @for (ingredient of ingredients; track ingredient.name; let i = $index) {
+          <div class="ingredient-card">
+            <div class="ingredient-image-container">
+              <i class="pi pi-image ingredient-placeholder-icon"
+                 [style.display]="ingredient.imageLoaded ? 'none' : 'block'"></i>
+
+              <img
+                [src]="ingredient.imageUrl"
+                [alt]="ingredient.name"
+                (load)="onImageLoad(ingredient)"
+                (error)="onImageError($event, ingredient)"
+                [style.opacity]="ingredient.imageLoaded ? '1' : '0'"
+                class="ingredient-image">
+
+              <div class="ingredient-number">{{ i + 1 }}</div>
+            </div>
+
+            <div class="ingredient-details">
+              <h4 class="ingredient-name">{{ ingredient.name }}</h4>
+              <span class="ingredient-measure">
+                <i class="pi pi-measuring-cup"></i>
+                {{ ingredient.measure || 'Al gusto' }}
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="loading-state">
+      <p>Cargando ingredientes...</p>
+    </div>
+  }
+</p-dialog>

@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { interval } from 'rxjs';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -38,7 +39,7 @@ import { IngredientsModalComponent } from '../../../shared/components/ingredient
   templateUrl: './cocktail-list.component.html',
   styleUrl: './cocktail-list.component.scss'
 })
-export class CocktailListComponent implements OnInit {
+export class CocktailListComponent implements OnInit, OnDestroy {
   cocktails: Cocktail[] = [];
   categories: string[] = [];
   glasses: string[] = [];
@@ -47,8 +48,9 @@ export class CocktailListComponent implements OnInit {
   showIngredients: boolean = false;
   loading: boolean = false;
 
-  // probe usar esto para algo pero al final no
-  private isInitialized: boolean = false;
+  showCategoryModal: boolean = false;
+  categoryCocktails: Cocktail[] = [];
+  selectedCategoryName: string = '';
 
   alcoholicCount: number = 0;
   nonAlcoholicCount: number = 0;
@@ -68,7 +70,8 @@ export class CocktailListComponent implements OnInit {
 
   alphabet: any[] = [];
 
-  private searchTimeout: any;
+  private searchSubject$ = new Subject<string>();
+  private destroy$ = new Subject<void>();
 
   constructor(
     private cocktailService: CocktailService,
@@ -83,6 +86,40 @@ export class CocktailListComponent implements OnInit {
   ngOnInit(): void {
     this.loadCategoriesAndGlasses();
     this.loadInitialCocktails();
+    this.setupSearchSubscription();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private setupSearchSubscription(): void {
+    this.searchSubject$
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(searchText => {
+        if (searchText && searchText.trim() !== '') {
+          this.selectedLetter = '';
+          this.selectedCategory = '';
+          this.selectedGlass = '';
+          this.selectedAlcoholic = '';
+          this.loading = true;
+          console.log('buscando:', searchText);
+          this.cocktailService.searchByName(searchText).subscribe(result => {
+            this.cocktails = result;
+            this.updateCounts();
+            this.loading = false;
+          });
+        } else if (this.selectedLetter) {
+          this.filterByLetter(this.selectedLetter);
+        } else {
+          this.loadInitialCocktails();
+        }
+      });
   }
 
   loadCategoriesAndGlasses(): void {
@@ -110,29 +147,7 @@ export class CocktailListComponent implements OnInit {
   }
 
   onSearchChange(): void {
-    if (this.searchTimeout) {
-      clearTimeout(this.searchTimeout);
-    }
-
-    this.searchTimeout = setTimeout(() => {
-      if (this.searchText && this.searchText.trim() !== '') {
-        this.selectedLetter = '';
-        this.selectedCategory = '';
-        this.selectedGlass = '';
-        this.selectedAlcoholic = '';
-        this.loading = true;
-        console.log('buscando:', this.searchText);
-        this.cocktailService.searchByName(this.searchText).subscribe(result => {
-          this.cocktails = result;
-          this.updateCounts();
-          this.loading = false;
-        });
-      } else if (this.selectedLetter) {
-        this.filterByLetter(this.selectedLetter);
-      } else {
-        this.loadInitialCocktails();
-      }
-    }, 500);
+    this.searchSubject$.next(this.searchText);
   }
 
   clearSearch(): void {
@@ -243,6 +258,14 @@ export class CocktailListComponent implements OnInit {
   showIngredientsModal(cocktail: Cocktail): void {
     this.selectedCocktail = cocktail;
     this.showIngredients = true;
+  }
+
+  openCategoryModal(category: string): void {
+    this.selectedCategoryName = category;
+    this.showCategoryModal = true;
+    this.cocktailService.filterByCategory(category).subscribe(result => {
+      this.categoryCocktails = result;
+    });
   }
 
   navigateToCocktail(id: string): void {

@@ -147,6 +147,9 @@
             Vaso <p-sortIcon field="strGlass"></p-sortIcon>
           </th>
           <th style="width: 120px">Ingredientes</th>
+          <th pSortableColumn="dateModified" style="width: 150px">
+            Fecha <p-sortIcon field="dateModified"></p-sortIcon>
+          </th>
         </tr>
       </ng-template>
 
@@ -177,7 +180,10 @@
             <p-tag
               [value]="cocktail.strCategory"
               severity="info"
-              class="category-tag">
+              class="category-tag"
+              (click)="openCategoryModal(cocktail.strCategory)"
+              style="cursor: pointer"
+              [pTooltip]="'Ver cócteles de esta categoría'">
             </p-tag>
           </td>
           <td>
@@ -205,12 +211,20 @@
               pTooltip="Ver ingredientes">
             </p-button>
           </td>
+          <td>
+            <span *ngIf="cocktail.dateModified" style="font-size: 0.9rem">
+              {{ cocktail.dateModified | date:'dd/MM/yyyy' }}
+            </span>
+            <span *ngIf="!cocktail.dateModified" style="color: #999; font-style: italic">
+              N/A
+            </span>
+          </td>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="7" class="empty-message">
+          <td colspan="8" class="empty-message">
             <div class="empty-content">
               <i class="pi pi-search" style="font-size: 3rem; color: var(--surface-400);"></i>
               <h3>No se encontraron cócteles</h3>
@@ -248,4 +262,22 @@
     [(visible)]="showIngredients"
     [cocktail]="selectedCocktail">
   </app-ingredients-modal>
+
+  <!-- Modal de categoria -->
+  <p-dialog
+    [(visible)]="showCategoryModal"
+    [header]="'Categoría: ' + selectedCategoryName"
+    [modal]="true"
+    [style]="{width: '80vw', maxWidth: '900px'}"
+    [dismissableMask]="true">
+    <div class="category-grid">
+      <div
+        *ngFor="let cocktail of categoryCocktails"
+        class="category-item"
+        (click)="navigateToCocktail(cocktail.idDrink)">
+        <img [src]="cocktail.strDrinkThumb" [alt]="cocktail.strDrink">
+        <p>{{ cocktail.strDrink }}</p>
+      </div>
+    </div>
+  </p-dialog>
 </div>

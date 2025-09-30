@@ -7,6 +7,8 @@ import { TagModule } from 'primeng/tag';
 import { DividerModule } from 'primeng/divider';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ChipModule } from 'primeng/chip';
+import { CarouselModule } from 'primeng/carousel';
+import { TooltipModule } from 'primeng/tooltip';
 import { CocktailService } from '../../core/services/cocktail.service';
 import { Cocktail } from '../../core/models';
 import { IngredientsModalComponent } from '../../shared/components/ingredients-modal/ingredients-modal.component';
@@ -22,6 +24,8 @@ import { IngredientsModalComponent } from '../../shared/components/ingredients-m
     DividerModule,
     ProgressSpinnerModule,
     ChipModule,
+    CarouselModule,
+    TooltipModule,
     IngredientsModalComponent
   ],
   templateUrl: './cocktail-detail.component.html',
@@ -37,7 +41,9 @@ export class CocktailDetailComponent implements OnInit {
 
   showIngredientsModal: boolean = false;
 
-  
+  showCategorySlider: boolean = false;
+  categoryCocktails: Cocktail[] = [];
+
   private previousCocktailId: string = '';
 
   constructor(
@@ -156,5 +162,20 @@ export class CocktailDetailComponent implements OnInit {
   getTags(): string[] {
     if (!this.cocktail || !this.cocktail.strTags) return [];
     return this.cocktail.strTags.split(',').map(tag => tag.trim());
+  }
+
+  openCategorySlider(category: string): void {
+    this.showCategorySlider = true;
+    this.cocktailService.filterByCategory(category).subscribe(result => {
+      this.categoryCocktails = result;
+      console.log('cocteles de categoria:', result.length);
+    });
+  }
+
+  navigateToCocktail(id: string): void {
+    this.showCategorySlider = false;
+    this.router.navigate(['/cocktail', id]).then(() => {
+      this.loadCocktail(id);
+    });
   }
 }

@@ -37,7 +37,10 @@
               <p-tag
                 [value]="cocktail.strCategory"
                 severity="info"
-                icon="pi pi-tag">
+                icon="pi pi-tag"
+                (click)="openCategorySlider(cocktail.strCategory)"
+                style="cursor: pointer"
+                [pTooltip]="'Ver cócteles de esta categoría'">
               </p-tag>
               <p-tag
                 [value]="cocktail.strAlcoholic"
@@ -201,6 +204,37 @@
     [(visible)]="showIngredientsModal"
     [cocktail]="cocktail">
   </app-ingredients-modal>
+}
+
+<!-- Slider de categoría -->
+@if (showCategorySlider && categoryCocktails.length > 0) {
+  <div class="category-slider-overlay" (click)="showCategorySlider = false">
+    <div class="category-slider-container" (click)="$event.stopPropagation()">
+      <div class="slider-header">
+        <h3>Cócteles de la categoría</h3>
+        <button class="close-btn" (click)="showCategorySlider = false">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+      <p-carousel
+        [value]="categoryCocktails"
+        [numVisible]="3"
+        [numScroll]="1"
+        [circular]="true"
+        [responsiveOptions]="[
+          {breakpoint: '1024px', numVisible: 3, numScroll: 1},
+          {breakpoint: '768px', numVisible: 2, numScroll: 1},
+          {breakpoint: '560px', numVisible: 1, numScroll: 1}
+        ]">
+        <ng-template let-cocktail pTemplate="item">
+          <div class="carousel-item" (click)="navigateToCocktail(cocktail.idDrink)">
+            <img [src]="cocktail.strDrinkThumb" [alt]="cocktail.strDrink">
+            <p>{{ cocktail.strDrink }}</p>
+          </div>
+        </ng-template>
+      </p-carousel>
+    </div>
+  </div>
 }
 
 <!-- Loading -->
