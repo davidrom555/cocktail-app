@@ -30,6 +30,22 @@ body {
   border-radius: 4px;
 }
 
+
+.p-tooltip {
+  .p-tooltip-text {
+    background-color: #1e293b !important;
+    color: white !important;
+    font-size: 13px !important;
+    padding: 8px 12px !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .p-tooltip-arrow {
+    border-top-color: #1e293b !important;
+  }
+}
+
 /* utiles */
 .text-center {
   text-align: center;
