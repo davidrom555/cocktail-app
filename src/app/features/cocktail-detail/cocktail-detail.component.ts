@@ -54,7 +54,6 @@ export class CocktailDetailComponent implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.params['id'];
-    console.log('cargando coctel:', id);
     this.loadCocktail(id);
   }
 
@@ -101,9 +100,9 @@ export class CocktailDetailComponent implements OnInit {
     if (!this.cocktail) return;
 
     this.selectedLanguage = lang;
-    console.log('cambiando idioma a:', lang);
+    console.log('cambiando a idioma:', lang);
 
-    
+    // si el idioma no tiene traduccion, uso ingles por defecto
     if (lang === 'en') {
       this.currentInstructions = this.cocktail.strInstructions || '';
     } else if (lang === 'es' && this.cocktail.strInstructionsES) {
@@ -115,7 +114,7 @@ export class CocktailDetailComponent implements OnInit {
     } else if (lang === 'it' && this.cocktail.strInstructionsIT) {
       this.currentInstructions = this.cocktail.strInstructionsIT;
     } else {
-      
+      // fallback a ingles si no hay traduccion
       this.currentInstructions = this.cocktail.strInstructions || '';
     }
   }
@@ -160,15 +159,16 @@ export class CocktailDetailComponent implements OnInit {
   }
 
   getTags(): string[] {
-    if (!this.cocktail || !this.cocktail.strTags) return [];
-    return this.cocktail.strTags.split(',').map(tag => tag.trim());
+    if (!this.cocktail?.strTags) return [];
+    return this.cocktail.strTags.split(',').map(t => t.trim());
   }
 
   openCategorySlider(category: string): void {
     this.showCategorySlider = true;
+    // traigo mas cocteles de la misma categoria para mostrar en el slider
     this.cocktailService.filterByCategory(category).subscribe(result => {
       this.categoryCocktails = result;
-      console.log('cocteles de categoria:', result.length);
+      console.log('encontre', result.length, 'cocteles de esta categoria');
     });
   }
 
