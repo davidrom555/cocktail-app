@@ -77,9 +77,10 @@ export class CocktailListComponent implements OnInit, OnDestroy {
     private cocktailService: CocktailService,
     private router: Router
   ) {
+    // genero array con las letras A-Z
     for (let i = 0; i < 26; i++) {
-      const letter = String.fromCharCode(65 + i);
-      this.alphabet.push({ label: letter, value: letter.toLowerCase() });
+      const char = String.fromCharCode(65 + i);
+      this.alphabet.push({ label: char, value: char.toLowerCase() });
     }
   }
 
@@ -95,6 +96,7 @@ export class CocktailListComponent implements OnInit, OnDestroy {
   }
 
   private setupSearchSubscription(): void {
+    // espero 500ms antes de buscar para no hacer muchas requests
     this.searchSubject$
       .pipe(
         debounceTime(500),
@@ -125,24 +127,23 @@ export class CocktailListComponent implements OnInit, OnDestroy {
   loadCategoriesAndGlasses(): void {
     this.cocktailService.getCategories().subscribe(cats => {
       this.categories = cats;
-      console.log('categorias:', cats.length);
+      console.log('categorias cargadas:', cats.length);
     });
 
     this.cocktailService.getGlasses().subscribe(glasses => {
       this.glasses = glasses;
-      console.log('vasos:', glasses.length);
+      console.log('tipos de vasos:', glasses.length);
     });
-
   }
 
   loadInitialCocktails(): void {
     this.loading = true;
-
+    // cargo los que empiecen con 'a' por defecto
     this.cocktailService.searchByLetter('a').subscribe(result => {
       this.cocktails = result;
       this.updateCounts();
       this.loading = false;
-      console.log('cocktails iniciales cargados:', result.length);
+      console.log('cargados', result.length, 'cocteles');
     });
   }
 
@@ -243,9 +244,10 @@ export class CocktailListComponent implements OnInit, OnDestroy {
     return !!(this.selectedCategory || this.selectedGlass || this.selectedAlcoholic);
   }
 
+  // cuenta cuantos ingredientes tiene cada coctel
   getIngredientCount(cocktail: Cocktail): number {
     let count = 0;
-  
+
     for (let i = 1; i <= 15; i++) {
       const ingredient = (cocktail as any)[`strIngredient${i}`];
       if (ingredient && ingredient.trim() !== '') {
@@ -273,22 +275,24 @@ export class CocktailListComponent implements OnInit, OnDestroy {
   }
 
   getAlcoholicSeverity(type: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {
-    if (type === 'Alcoholic') {
-      return 'warn';
-    } else if (type === 'Non Alcoholic') {
-      return 'success';
-    } else {
-      return 'info';
+    switch(type) {
+      case 'Alcoholic':
+        return 'warn';
+      case 'Non Alcoholic':
+        return 'success';
+      default:
+        return 'info';
     }
   }
 
   getAlcoholicIcon(type: string): string {
-    if (type === 'Alcoholic') {
-      return 'pi pi-wine-bottle';
-    } else if (type === 'Non Alcoholic') {
-      return 'pi pi-leaf';
-    } else {
-      return 'pi pi-question';
+    switch(type) {
+      case 'Alcoholic':
+        return 'pi pi-wine-bottle';
+      case 'Non Alcoholic':
+        return 'pi pi-leaf';
+      default:
+        return 'pi pi-question';
     }
   }
 
