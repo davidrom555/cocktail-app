@@ -15,18 +15,17 @@ export class CocktailService {
   constructor(private http: HttpClient) {}
 
   searchByLetter(letter: string): Observable<Cocktail[]> {
-    console.log('DEBUG - buscando letra:', letter);
+    console.log('buscando por letra:', letter);
     return this.http.get<any>(`${this.API_URL}/search.php?f=${letter}`)
       .pipe(
         map(response => {
-          // console.log('respuesta:', response); // 
           if (!response || !response.drinks) {
             return [];
           }
           return response.drinks;
         }),
         catchError(error => {
-          console.error('ERROR buscando:', error);
+          console.error('ups, error buscando:', error);
           return of([]);
         })
       );
@@ -65,7 +64,7 @@ export class CocktailService {
           );
         }),
         catchError(error => {
-          console.log('error:', error);
+          console.log('error filtrando categoria:', error);
           return of([]);
         })
       );
@@ -85,7 +84,7 @@ export class CocktailService {
           );
         }),
         catchError(error => {
-          console.log('error:', error);
+          console.log('error filtrando vasos:', error);
           return of([]);
         })
       );
@@ -105,7 +104,7 @@ export class CocktailService {
           );
         }),
         catchError(error => {
-          console.log('error:', error);
+          console.error('problema filtrando por tipo alcoholico', error);
           return of([]);
         })
       );
@@ -147,7 +146,7 @@ export class CocktailService {
           if (!response || !response.drinks) {
             return [];
           }
-          console.log('categorias cargadas:', response.drinks.length);
+          console.log('ok, cargue', response.drinks.length, 'categorias');
           return response.drinks.map((d: any) => d.strCategory);
         })
       );
@@ -160,12 +159,13 @@ export class CocktailService {
           if (!response || !response.drinks) {
             return [];
           }
-          console.log('vasos cargados:', response.drinks.length);
+          console.log('vasos:', response.drinks.length);
           return response.drinks.map((d: any) => d.strGlass);
         })
       );
   }
 
+  // la API viene con los ingredientes numerados del 1 al 15
   getIngredients(cocktail: Cocktail): any[] {
     const ingredients: any[] = [];
 
