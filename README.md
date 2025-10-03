@@ -5,8 +5,11 @@ App de cocteles usando Angular y la API de TheCocktailDB.
 ## Instalar
 
 ```bash
+
 git clone https://github.com/davidrom555/cocktail-app.git
 cd cocktail-app
+=======
+
 npm install
 npm start
 ```
