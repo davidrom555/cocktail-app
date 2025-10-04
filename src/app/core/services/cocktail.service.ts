@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, forkJoin, tap } from 'rxjs';
-import { map, catchError, switchMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { Cocktail } from '../models';
 
 @Injectable({
@@ -15,7 +15,6 @@ export class CocktailService {
   constructor(private http: HttpClient) {}
 
   searchByLetter(letter: string): Observable<Cocktail[]> {
-    console.log('buscando por letra:', letter);
     return this.http.get<any>(`${this.API_URL}/search.php?f=${letter}`)
       .pipe(
         map(response => {
@@ -24,10 +23,7 @@ export class CocktailService {
           }
           return response.drinks;
         }),
-        catchError(error => {
-          console.error('ups, error buscando:', error);
-          return of([]);
-        })
+        catchError(() => of([]))
       );
   }
 
@@ -43,70 +39,46 @@ export class CocktailService {
           }
           return response.drinks;
         }),
-        catchError(error => {
-          console.log('error:', error);
-          return of([]);
-        })
+        catchError(() => of([]))
       );
   }
 
-  filterByCategory(category: string): Observable<Cocktail[]> {
+  filterByCategory(category: string): Observable<any[]> {
     return this.http.get<any>(`${this.API_URL}/filter.php?c=${category}`)
       .pipe(
-        switchMap(response => {
+        map(response => {
           if (!response || !response.drinks || response.drinks.length === 0) {
-            return of([]);
+            return [];
           }
-          const cocktailIds = response.drinks.map((d: any) => d.idDrink);
-          const detailRequests = cocktailIds.map((id: string) => this.getCocktailById(id));
-          return forkJoin<(Cocktail | null)[]>(detailRequests).pipe(
-            map((cocktails: (Cocktail | null)[]) => cocktails.filter((c): c is Cocktail => c !== null))
-          );
+          return response.drinks;
         }),
-        catchError(error => {
-          console.log('error filtrando categoria:', error);
-          return of([]);
-        })
+        catchError(() => of([]))
       );
   }
 
-  filterByGlass(glass: string): Observable<Cocktail[]> {
+  filterByGlass(glass: string): Observable<any[]> {
     return this.http.get<any>(`${this.API_URL}/filter.php?g=${glass}`)
       .pipe(
-        switchMap(response => {
+        map(response => {
           if (!response || !response.drinks || response.drinks.length === 0) {
-            return of([]);
+            return [];
           }
-          const cocktailIds = response.drinks.map((d: any) => d.idDrink);
-          const detailRequests = cocktailIds.map((id: string) => this.getCocktailById(id));
-          return forkJoin<(Cocktail | null)[]>(detailRequests).pipe(
-            map((cocktails: (Cocktail | null)[]) => cocktails.filter((c): c is Cocktail => c !== null))
-          );
+          return response.drinks;
         }),
-        catchError(error => {
-          console.log('error filtrando vasos:', error);
-          return of([]);
-        })
+        catchError(() => of([]))
       );
   }
 
-  filterByAlcoholic(type: string): Observable<Cocktail[]> {
+  filterByAlcoholic(type: string): Observable<any[]> {
     return this.http.get<any>(`${this.API_URL}/filter.php?a=${type}`)
       .pipe(
-        switchMap(response => {
+        map(response => {
           if (!response || !response.drinks || response.drinks.length === 0) {
-            return of([]);
+            return [];
           }
-          const cocktailIds = response.drinks.map((d: any) => d.idDrink);
-          const detailRequests = cocktailIds.map((id: string) => this.getCocktailById(id));
-          return forkJoin<(Cocktail | null)[]>(detailRequests).pipe(
-            map((cocktails: (Cocktail | null)[]) => cocktails.filter((c): c is Cocktail => c !== null))
-          );
+          return response.drinks;
         }),
-        catchError(error => {
-          console.error('problema filtrando por tipo alcoholico', error);
-          return of([]);
-        })
+        catchError(() => of([]))
       );
   }
 
@@ -119,10 +91,7 @@ export class CocktailService {
           }
           return null;
         }),
-        catchError(error => {
-          console.log('error obteniendo cocktail:', error);
-          return of(null);
-        })
+        catchError(() => of(null))
       );
   }
 
@@ -146,7 +115,6 @@ export class CocktailService {
           if (!response || !response.drinks) {
             return [];
           }
-          console.log('ok, cargue', response.drinks.length, 'categorias');
           return response.drinks.map((d: any) => d.strCategory);
         })
       );
@@ -159,7 +127,6 @@ export class CocktailService {
           if (!response || !response.drinks) {
             return [];
           }
-          console.log('vasos:', response.drinks.length);
           return response.drinks.map((d: any) => d.strGlass);
         })
       );
