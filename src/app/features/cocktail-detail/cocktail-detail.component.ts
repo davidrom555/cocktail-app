@@ -51,8 +51,13 @@ export class CocktailDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.params['id'];
-    this.loadCocktail(id);
+    // me suscribo a los cambios en los parametros de la ruta
+    this.route.params.subscribe(params => {
+      const id = params['id'];
+      if (id) {
+        this.loadCocktail(id);
+      }
+    });
   }
 
   loadCocktail(id: string): void {
@@ -131,23 +136,6 @@ export class CocktailDetailComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/']);
-  }
-
-  loadRandomCocktail(): void {
-    this.loading = true;
-    this.cocktailService.getRandomCocktail().subscribe({
-      next: (cocktail) => {
-        if (cocktail) {
-          this.router.navigate(['/cocktail', cocktail.idDrink]).then(() => {
-            this.loadCocktail(cocktail.idDrink);
-          });
-        }
-      },
-      error: (error) => {
-        console.log('error:', error);
-        this.loading = false;
-      }
-    });
   }
 
   openImageFullscreen(): void {
