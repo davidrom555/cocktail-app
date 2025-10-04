@@ -201,15 +201,17 @@
 }
 
 <!-- Slider de categoría -->
-@if (showCategorySlider && categoryCocktails.length > 0) {
-  <div class="category-slider-overlay" (click)="showCategorySlider = false">
-    <div class="category-slider-container" (click)="$event.stopPropagation()">
-      <div class="slider-header">
-        <h3>Cócteles de la categoría</h3>
-        <button class="close-btn" (click)="showCategorySlider = false">
-          <i class="pi pi-times"></i>
-        </button>
-      </div>
+<p-dialog
+  [(visible)]="showCategorySlider"
+  [modal]="true"
+  [header]="'Cócteles de la categoría'"
+  [style]="{ width: '800px', maxWidth: '90vw' }"
+  [breakpoints]="{ '768px': '95vw' }"
+  [draggable]="false"
+  [resizable]="false">
+
+  @if (categoryCocktails.length > 0) {
+    <div class="category-carousel-container">
       <p-carousel
         [value]="categoryCocktails"
         [numVisible]="3"
@@ -228,8 +230,8 @@
         </ng-template>
       </p-carousel>
     </div>
-  </div>
-}
+  }
+</p-dialog>
 
 <!-- Loading -->
 @if (loading) {

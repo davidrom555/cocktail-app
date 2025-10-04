@@ -244,51 +244,8 @@
   }
 }
 
-.category-slider-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.category-slider-container {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  max-width: 90%;
-  width: 800px;
-  max-height: 80vh;
-  overflow: auto;
-}
-
-.slider-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-
-  h3 {
-    margin: 0;
-    color: #06b6d4;
-  }
-
-  .close-btn {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #666;
-
-    &:hover {
-      color: #06b6d4;
-    }
-  }
+.category-carousel-container {
+  padding: 10px;
 }
 
 .carousel-item {

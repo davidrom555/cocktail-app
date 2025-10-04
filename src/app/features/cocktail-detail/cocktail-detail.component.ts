@@ -9,6 +9,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ChipModule } from 'primeng/chip';
 import { CarouselModule } from 'primeng/carousel';
 import { TooltipModule } from 'primeng/tooltip';
+import { DialogModule } from 'primeng/dialog';
 import { CocktailService } from '../../core/services/cocktail.service';
 import { Cocktail } from '../../core/models';
 import { IngredientsModalComponent } from '../../shared/components/ingredients-modal/ingredients-modal.component';
@@ -26,6 +27,7 @@ import { IngredientsModalComponent } from '../../shared/components/ingredients-m
     ChipModule,
     CarouselModule,
     TooltipModule,
+    DialogModule,
     IngredientsModalComponent
   ],
   templateUrl: './cocktail-detail.component.html',
