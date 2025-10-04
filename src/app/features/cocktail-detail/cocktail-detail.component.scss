@@ -201,55 +201,26 @@
   }
 }
 
-// slider de categoria
-.category-slider-section {
-  margin-top: 30px;
-
-  h3 {
-    margin-bottom: 20px;
-    color: #333;
-  }
-}
-
-.carousel-cocktail {
-  cursor: pointer;
-  text-align: center;
-  padding: 10px;
-  transition: transform 0.2s;
-
-  &:hover {
-    transform: translateY(-5px);
-  }
-
-  .carousel-image {
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
-    border-radius: 8px;
-    margin-bottom: 10px;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-  .carousel-name {
-    font-weight: 500;
-    color: #333;
-    margin: 0;
-  }
-}
-
 // loading
 .loading-container {
   text-align: center;
   padding: 50px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 
-  p {
-    margin-top: 15px;
-    color: #666;
+  .loading-text {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #06b6d4;
+    font-weight: 500;
+  }
+
+  ::ng-deep .custom-spinner {
+    .p-progress-spinner-circle {
+      stroke: #06b6d4;
+    }
   }
 }
 

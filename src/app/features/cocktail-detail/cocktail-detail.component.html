@@ -240,7 +240,11 @@
 <!-- Loading -->
 @if (loading) {
   <div class="loading-container">
-    <p-progressSpinner></p-progressSpinner>
-    <p>Cargando detalles del cóctel...</p>
+    <p-progressSpinner
+      styleClass="custom-spinner"
+      [style]="{width: '60px', height: '60px'}"
+      strokeWidth="4">
+    </p-progressSpinner>
+    <p class="loading-text">Cargando detalles del cóctel...</p>
   </div>
 }
