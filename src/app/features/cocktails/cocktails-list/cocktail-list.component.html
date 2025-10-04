@@ -98,7 +98,7 @@
       @if (hasActiveFilters()) {
         <div class="clear-filters" style="margin-top: 1rem">
           <p-button
-            label="Limpiar todos los filtros"
+            label="Limpiar filtros"
             icon="pi pi-times"
             severity="secondary"
             (onClick)="clearAllFilters()">
@@ -107,21 +107,22 @@
       }
     </div>
 
-    <!-- Contador de resultados -->
-    @if (!loading) {
-      <div class="results-info">
-        <p-chip
-          [label]="cocktails.length + ' cócteles encontrados'"
-          icon="pi pi-check"
-          styleClass="results-chip">
-        </p-chip>
+    <!-- Contador de resultados o loader -->
+    @if (loading) {
+      <div class="results-info loading-spinner-container">
+        <p-progressSpinner
+          styleClass="custom-spinner"
+          [style]="{width: '50px', height: '50px'}"
+          strokeWidth="4">
+        </p-progressSpinner>
+        <span class="loading-text">Cargando cócteles...</span>
       </div>
     }
 
     <!-- Tabla de resultados -->
     <p-table
       [value]="cocktails"
-      [paginator]="true"
+      [paginator]="!isFilterActive"
       [rows]="10"
       [showCurrentPageReport]="true"
       currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} cócteles"
@@ -248,13 +249,22 @@
             <i class="pi pi-leaf"></i>
             <span>Sin Alcohol: <strong>{{ nonAlcoholicCount }}</strong></span>
           </div>
-          <div class="summary-item">
-            <i class="pi pi-list"></i>
-            <span>Total: <strong>{{ totalCount }}</strong></span>
-          </div>
         </div>
       </ng-template>
     </p-table>
+
+    <!-- Paginador para filtros -->
+    @if (!loading && isFilterActive && totalRecords > pageSize) {
+      <p-paginator
+        [first]="currentPage * pageSize"
+        [rows]="pageSize"
+        [totalRecords]="totalRecords"
+        (onPageChange)="onPageChange($event)"
+        [showCurrentPageReport]="true"
+        [showPageLinks]="false"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} resultados">
+      </p-paginator>
+    }
   </p-card>
 
   <!-- Modal de ingredientes -->

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, forkJoin } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
@@ -14,6 +14,8 @@ import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
 import { BadgeModule } from 'primeng/badge';
 import { ChipModule } from 'primeng/chip';
+import { PaginatorModule } from 'primeng/paginator';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CocktailService } from '../../../core/services/cocktail.service';
 import { Cocktail } from '../../../core/models';
 import { IngredientsModalComponent } from '../../../shared/components/ingredients-modal/ingredients-modal.component';
@@ -34,6 +36,8 @@ import { IngredientsModalComponent } from '../../../shared/components/ingredient
     BadgeModule,
     TooltipModule,
     ChipModule,
+    PaginatorModule,
+    ProgressSpinnerModule,
     IngredientsModalComponent
   ],
   templateUrl: './cocktail-list.component.html',
@@ -55,6 +59,14 @@ export class CocktailListComponent implements OnInit, OnDestroy {
   alcoholicCount: number = 0;
   nonAlcoholicCount: number = 0;
   totalCount: number = 0;
+
+  // Paginación lazy para filtros
+  isFilterActive: boolean = false;
+  allCocktailIds: string[] = [];
+  loadedCocktails = new Map<string, Cocktail>();
+  currentPage: number = 0;
+  pageSize: number = 5;
+  totalRecords: number = 0;
 
   searchText: string = '';
   selectedLetter: string = '';
@@ -110,7 +122,6 @@ export class CocktailListComponent implements OnInit, OnDestroy {
           this.selectedGlass = '';
           this.selectedAlcoholic = '';
           this.loading = true;
-          console.log('buscando:', searchText);
           this.cocktailService.searchByName(searchText).subscribe(result => {
             this.cocktails = result;
             this.updateCounts();
@@ -127,12 +138,10 @@ export class CocktailListComponent implements OnInit, OnDestroy {
   loadCategoriesAndGlasses(): void {
     this.cocktailService.getCategories().subscribe(cats => {
       this.categories = cats;
-      console.log('categorias cargadas:', cats.length);
     });
 
     this.cocktailService.getGlasses().subscribe(glasses => {
       this.glasses = glasses;
-      console.log('tipos de vasos:', glasses.length);
     });
   }
 
@@ -143,7 +152,6 @@ export class CocktailListComponent implements OnInit, OnDestroy {
       this.cocktails = result;
       this.updateCounts();
       this.loading = false;
-      console.log('cargados', result.length, 'cocteles');
     });
   }
 
@@ -184,13 +192,17 @@ export class CocktailListComponent implements OnInit, OnDestroy {
       this.selectedGlass = '';
       this.selectedAlcoholic = '';
       this.loading = true;
+      this.isFilterActive = true;
       this.cocktailService.filterByCategory(this.selectedCategory).subscribe(result => {
-        this.cocktails = result;
-        this.updateCounts();
-        this.loading = false;
+        this.allCocktailIds = result.map((c: any) => c.idDrink);
+        this.totalRecords = this.allCocktailIds.length;
+        this.currentPage = 0;
+        this.loadedCocktails.clear();
+        this.loadCocktailsForPage(0);
       });
     } else {
       this.searchText = '';
+      this.isFilterActive = false;
       this.loadInitialCocktails();
     }
   }
@@ -202,13 +214,17 @@ export class CocktailListComponent implements OnInit, OnDestroy {
       this.selectedCategory = '';
       this.selectedAlcoholic = '';
       this.loading = true;
+      this.isFilterActive = true;
       this.cocktailService.filterByGlass(this.selectedGlass).subscribe(result => {
-        this.cocktails = result;
-        this.updateCounts();
-        this.loading = false;
+        this.allCocktailIds = result.map((c: any) => c.idDrink);
+        this.totalRecords = this.allCocktailIds.length;
+        this.currentPage = 0;
+        this.loadedCocktails.clear();
+        this.loadCocktailsForPage(0);
       });
     } else {
       this.searchText = '';
+      this.isFilterActive = false;
       this.loadInitialCocktails();
     }
   }
@@ -220,13 +236,17 @@ export class CocktailListComponent implements OnInit, OnDestroy {
       this.selectedCategory = '';
       this.selectedGlass = '';
       this.loading = true;
+      this.isFilterActive = true;
       this.cocktailService.filterByAlcoholic(this.selectedAlcoholic).subscribe(result => {
-        this.cocktails = result;
-        this.updateCounts();
-        this.loading = false;
+        this.allCocktailIds = result.map((c: any) => c.idDrink);
+        this.totalRecords = this.allCocktailIds.length;
+        this.currentPage = 0;
+        this.loadedCocktails.clear();
+        this.loadCocktailsForPage(0);
       });
     } else {
       this.searchText = '';
+      this.isFilterActive = false;
       this.loadInitialCocktails();
     }
   }
@@ -290,9 +310,10 @@ export class CocktailListComponent implements OnInit, OnDestroy {
       case 'Alcoholic':
         return 'pi pi-wine-bottle';
       case 'Non Alcoholic':
+      case 'Non_Alcoholic':
         return 'pi pi-leaf';
       default:
-        return 'pi pi-question';
+        return '';
     }
   }
 
@@ -300,5 +321,44 @@ export class CocktailListComponent implements OnInit, OnDestroy {
     this.alcoholicCount = this.cocktails.filter(c => c.strAlcoholic === 'Alcoholic').length;
     this.nonAlcoholicCount = this.cocktails.filter(c => c.strAlcoholic !== 'Alcoholic').length;
     this.totalCount = this.cocktails.length;
+  }
+
+  loadCocktailsForPage(page: number): void {
+    const start = page * this.pageSize;
+    const end = start + this.pageSize;
+    const idsToLoad = this.allCocktailIds.slice(start, end);
+
+    const newIds = idsToLoad.filter(id => !this.loadedCocktails.has(id));
+
+    if (newIds.length === 0) {
+      this.cocktails = idsToLoad
+        .map(id => this.loadedCocktails.get(id))
+        .filter((c): c is Cocktail => c !== undefined);
+      this.updateCounts();
+      this.loading = false;
+      return;
+    }
+
+
+    const requests = newIds.map(id => this.cocktailService.getCocktailById(id));
+    forkJoin(requests).subscribe(results => {
+      results.forEach(cocktail => {
+        if (cocktail) {
+          this.loadedCocktails.set(cocktail.idDrink, cocktail);
+        }
+      });
+
+      this.cocktails = idsToLoad
+        .map(id => this.loadedCocktails.get(id))
+        .filter((c): c is Cocktail => c !== undefined);
+      this.updateCounts();
+      this.loading = false;
+    });
+  }
+
+  onPageChange(event: any): void {
+    this.currentPage = event.page;
+    this.loading = true;
+    this.loadCocktailsForPage(event.page);
   }
 }
