@@ -44,8 +44,6 @@ export class CocktailDetailComponent implements OnInit {
   showCategorySlider: boolean = false;
   categoryCocktails: Cocktail[] = [];
 
-  private previousCocktailId: string = '';
-
   constructor(
     private route: ActivatedRoute,
     private router: Router,
