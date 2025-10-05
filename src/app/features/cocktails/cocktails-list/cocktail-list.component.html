@@ -73,14 +73,6 @@
       <div class="alphabet-filter">
         <label>Filtrar por primera letra:</label>
         <div class="alphabet-buttons">
-          <button
-            pButton
-            label="Todas"
-            [class.p-button-outlined]="selectedLetter !== ''"
-            [class.p-button-raised]="selectedLetter === ''"
-            (click)="clearLetterFilter()"
-            class="letter-btn">
-          </button>
           @for (letter of alphabet; track letter.value) {
             <button
               pButton
