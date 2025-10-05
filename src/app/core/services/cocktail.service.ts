@@ -1,18 +1,32 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Cocktail } from '../models';
+import { ErrorHandlerService } from './error-handler.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CocktailService {
- 
+
   private API_URL = 'https://www.thecocktaildb.com/api/json/v1/1';
   private INGREDIENT_IMAGE_URL = 'https://www.thecocktaildb.com/images/ingredients';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private errorHandler: ErrorHandlerService
+  ) {}
+
+  private handleError<T>(fallbackValue: T) {
+    return (error: any): Observable<T> => {
+      this.errorHandler.showError(
+        'Hubo un problema al conectar con el servicio. Por favor, verifica tu conexión e intenta nuevamente.',
+        'Error de conexión'
+      );
+      return of(fallbackValue);
+    };
+  }
 
   searchByLetter(letter: string): Observable<Cocktail[]> {
     return this.http.get<any>(`${this.API_URL}/search.php?f=${letter}`)
@@ -23,7 +37,7 @@ export class CocktailService {
           }
           return response.drinks;
         }),
-        catchError(() => of([]))
+        catchError(this.handleError<Cocktail[]>([]))
       );
   }
 
@@ -39,7 +53,7 @@ export class CocktailService {
           }
           return response.drinks;
         }),
-        catchError(() => of([]))
+        catchError(this.handleError<Cocktail[]>([]))
       );
   }
 
@@ -52,7 +66,7 @@ export class CocktailService {
           }
           return response.drinks;
         }),
-        catchError(() => of([]))
+        catchError(this.handleError<any[]>([]))
       );
   }
 
@@ -65,7 +79,7 @@ export class CocktailService {
           }
           return response.drinks;
         }),
-        catchError(() => of([]))
+        catchError(this.handleError<any[]>([]))
       );
   }
 
@@ -78,7 +92,7 @@ export class CocktailService {
           }
           return response.drinks;
         }),
-        catchError(() => of([]))
+        catchError(this.handleError<any[]>([]))
       );
   }
 
@@ -91,7 +105,7 @@ export class CocktailService {
           }
           return null;
         }),
-        catchError(() => of(null))
+        catchError(this.handleError<Cocktail | null>(null))
       );
   }
 
@@ -104,7 +118,7 @@ export class CocktailService {
           }
           return null;
         }),
-        catchError(() => of(null))
+        catchError(this.handleError<Cocktail | null>(null))
       );
   }
 
@@ -116,7 +130,8 @@ export class CocktailService {
             return [];
           }
           return response.drinks.map((d: any) => d.strCategory);
-        })
+        }),
+        catchError(this.handleError<string[]>([]))
       );
   }
 
@@ -128,7 +143,8 @@ export class CocktailService {
             return [];
           }
           return response.drinks.map((d: any) => d.strGlass);
-        })
+        }),
+        catchError(this.handleError<string[]>([]))
       );
   }
 

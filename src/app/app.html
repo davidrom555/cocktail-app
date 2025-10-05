@@ -1,0 +1,32 @@
+<div class="app-container">
+  <app-header></app-header>
+
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Modal de error -->
+  <p-dialog
+    [(visible)]="error$().show"
+    [header]="error$().title"
+    [modal]="true"
+    [closable]="true"
+    [dismissableMask]="true"
+    [style]="{width: '450px'}"
+    [contentStyle]="{padding: '1.5rem'}"
+    styleClass="error-dialog"
+    (onHide)="closeErrorDialog()">
+    <div class="error-dialog-content" style="display: flex; align-items: center; gap: 1rem;">
+      <i class="pi pi-exclamation-triangle" style="font-size: 2rem; color: #e74c3c;"></i>
+      <p style="margin: 0;">{{ error$().message }}</p>
+    </div>
+    <ng-template pTemplate="footer">
+      <p-button
+        label="Cerrar"
+        icon="pi pi-times"
+        (onClick)="closeErrorDialog()"
+        severity="secondary">
+      </p-button>
+    </ng-template>
+  </p-dialog>
+</div>
